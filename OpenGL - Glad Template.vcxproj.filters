@@ -49,10 +49,10 @@
     <Library Include="Dependencies\lib\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="vertexShader.txt">
+    <Text Include="vertexShader.vs">
       <Filter>Source Files\Shaders</Filter>
     </Text>
-    <Text Include="fragmentShader.txt">
+    <Text Include="fragmentShader.fs">
       <Filter>Source Files\Shaders</Filter>
     </Text>
   </ItemGroup>

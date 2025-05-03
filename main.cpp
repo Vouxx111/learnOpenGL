@@ -14,6 +14,7 @@ int screenHeight = 600;
 glm::mat4 projection;
 unsigned int projectionLoc;
 unsigned int shaderProgram; // needed in callback for projection update
+float mixValue;
 
 
 // ------------------------------------------------------------- //
@@ -23,8 +24,19 @@ unsigned int shaderProgram; // needed in callback for projection update
 
 void processInput(GLFWwindow* window) {
 	// Exit the program if ESC is pressed
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		mixValue += 0.005f; // change this value accordingly (might be too slow or too fast based on system hardware)
+		if (mixValue >= 1.0f)
+			mixValue = 1.0f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		mixValue -= 0.005f; // change this value accordingly (might be too slow or too fast based on system hardware)
+		if (mixValue <= 0.0f)
+			mixValue = 0.0f;
+	}
 }
 
 
@@ -84,7 +96,7 @@ int main() {
 		return -1;
 	}
 
-	Shader ourShader("vertexShader.txt", "fragmentShader.txt"); //Declare New External Shader
+	Shader ourShader("C:/Users/iflyf/OneDrive/Documents/GitHub/learnOpenGL/vertexShader.vs", "C:/Users/iflyf/OneDrive/Documents/GitHub/learnOpenGL/fragmentShader.fs"); //Declare New External Shader	
 
 	shaderProgram = ourShader.ID;
 
@@ -101,21 +113,22 @@ int main() {
 
 	// Vertex array (4 unique vertices for the square)
 	float vertices[] = {
-		1.0f,  1.0f, 0.0f,   0.0f, 0.0f, 0.0f,  // Top right
-		-1.0f,  1.0f, 0.0f,   0.0f, 0.0f, 0.0f, // Top left
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 0.0f, // Bottom left
-		1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 0.0f   // Bottom right
+		// positions          // colors           // texture coords
+		 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f, // bottom right
+		-1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 	};
 
 	// Indices to form two triangles from the 4 vertices
 	unsigned int indices[] = {
-		0, 1, 2,  // First triangle (top-right, top-left, bottom-left)
-		0, 2, 3   // Second triangle (top-right, bottom-left, bottom-right)
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
 	};
 
 
 	// ------------------------------------------------------------- //
-	//                          SETUP Buffers                        //
+	//                          SETUP BUFFERS                        //
 	// ------------------------------------------------------------- //
 
 
@@ -135,16 +148,79 @@ int main() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Position attribute (location = 0)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// Color attribute (location = 1)
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)( 3* sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)( 3* sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	// Good practice: unbind everything
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+
+	// ------------------------------------------------------------- //
+	//                          TEXTURING	                         //
+	// ------------------------------------------------------------- //
+
+
+	unsigned int texture1;
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// load and generate the texture
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
+
+	unsigned char* data = stbi_load("C:/Users/iflyf/OneDrive/Documents/GitHub/learnOpenGL/container.jpg", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+
+	unsigned int texture2;
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// load and generate the texture
+	data = stbi_load("C:/Users/iflyf/OneDrive/Documents/GitHub/learnOpenGL/awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		GLenum format = nrChannels == 4 ? GL_RGBA : GL_RGB;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+
+	ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
+	glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);	// either set it manually like so:
+	ourShader.setInt("texture2", 1);	// or set it via the texture class
 
 
 	// ------------------------------------------------------------- //
@@ -161,6 +237,7 @@ int main() {
 	// Get uniform locations
 	unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
 	unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+	unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
 
 	// Call resize callback once manually to initialize projection matrix
 	framebuffer_size_callback(window, screenWidth, screenHeight);
@@ -182,6 +259,14 @@ int main() {
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		// bind textures on corresponding texture units
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
+		ourShader.setFloat("mixValue", mixValue);
 
 		// Draw the square
 		ourShader.use();
