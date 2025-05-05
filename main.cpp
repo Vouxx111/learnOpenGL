@@ -49,19 +49,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	screenWidth = width;
 	screenHeight = height;
 	glViewport(0, 0, width, height);
-
-	// Update projection matrix to account for new window size
-	float aspect = static_cast<float>(width) / height;
-	float fov = 45.0f; // Field of view (in degrees)
-	float near = 0.1f;  // Near clipping plane
-	float far = 100.0f; // Far clipping plane
-
-	// Perspective projection (FOV, aspect ratio, near and far planes)
-	projection = glm::perspective(glm::radians(fov), aspect, near, far);
-
-	// Upload updated projection to shader
-	glUseProgram(shaderProgram);
-	glUniformMatrix4fv(projectionLoc, 1, GL_TRUE, glm::value_ptr(projection));
 }
 
 
@@ -96,6 +83,10 @@ int main() {
 		return -1;
 	}
 
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	Shader ourShader("C:/Users/iflyf/OneDrive/Documents/GitHub/learnOpenGL/vertexShader.vs", "C:/Users/iflyf/OneDrive/Documents/GitHub/learnOpenGL/fragmentShader.fs"); //Declare New External Shader	
 
 	shaderProgram = ourShader.ID;
@@ -103,7 +94,6 @@ int main() {
 	// Set initial viewport and resize callback
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glViewport(0, 0, screenWidth, screenHeight);
-
 	
 
 	// ------------------------------------------------------------- //
@@ -113,18 +103,44 @@ int main() {
 
 	// Vertex array (4 unique vertices for the square)
 	float vertices[] = {
-		// positions          // colors           // texture coords
-		 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f, // bottom right
-		-1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+		// positions           // colors       // tex coords
+		-0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 0.0f,   0.0f, 0.0f, // 0
+		 0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 0.0f,   1.0f, 0.0f, // 1
+		 0.5f,  0.5f, -0.5f,    0.0f, 0.0f, 0.0f,   1.0f, 1.0f, // 2
+		-0.5f,  0.5f, -0.5f,    0.0f, 0.0f, 0.0f,   0.0f, 1.0f, // 3
+		-0.5f, -0.5f,  0.5f,    0.0f, 0.0f, 0.0f,   0.0f, 0.0f, // 4
+		 0.5f, -0.5f,  0.5f,    0.0f, 0.0f, 0.0f,   1.0f, 0.0f, // 5
+		 0.5f,  0.5f,  0.5f,    0.0f, 0.0f, 0.0f,   1.0f, 1.0f, // 6
+		-0.5f,  0.5f,  0.5f,    0.0f, 0.0f, 0.0f,   0.0f, 1.0f  // 7
 	};
 
 	// Indices to form two triangles from the 4 vertices
 	unsigned int indices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
+		// back face
+		0, 1, 2,
+		2, 3, 0,
+
+		// front face
+		4, 5, 6,
+		6, 7, 4,
+
+		// left face
+		0, 3, 7,
+		7, 4, 0,
+
+		// right face
+		1, 5, 6,
+		6, 2, 1,
+
+		// bottom face
+		0, 1, 5,
+		5, 4, 0,
+
+		// top face
+		3, 2, 6,
+		6, 7, 3
 	};
+
 
 
 	// ------------------------------------------------------------- //
@@ -219,7 +235,7 @@ int main() {
 
 
 	ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
-	glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);	// either set it manually like so:
+	ourShader.setInt("texture1", 0);	// either set it manually like so:
 	ourShader.setInt("texture2", 1);	// or set it via the texture class
 
 
@@ -228,19 +244,12 @@ int main() {
 	// ------------------------------------------------------------- //
 
 
-	glm::mat4 model = glm::mat4(1.0f); // No transformations
-	glm::mat4 view = glm::lookAt(
-		glm::vec3(0.0f, 0.0f, 5.0f),  // Camera position
-		glm::vec3(0.0f, 0.0f, 0.0f),  // Target point
-		glm::vec3(0.0f, 1.0f, 0.0f)); // Up direction
+	
 
-	// Get uniform locations
-	unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
-	unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
-	unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+	
 
 	// Call resize callback once manually to initialize projection matrix
-	framebuffer_size_callback(window, screenWidth, screenHeight);
+	
 
 
 	// ------------------------------------------------------------- //
@@ -253,12 +262,7 @@ int main() {
 
 		// Clear screen
 		glClearColor(0.0f, 0.5f, 0.8f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		//Set Matrixes
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
 		// bind textures on corresponding texture units
 		glActiveTexture(GL_TEXTURE0);
@@ -266,12 +270,40 @@ int main() {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
+
 		ourShader.setFloat("mixValue", mixValue);
+		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		// Draw the square
 		ourShader.use();
+
+
+		glm::mat4 model = glm::mat4(1.0f); // No transformations
+		glm::mat4 view = glm::mat4(1.0f); // Up direction
+		glm::mat4 projection = glm::mat4(1.0f);
+
+		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+		projection = glm::perspective(glm::radians(45.0f), static_cast<float>(screenWidth) / screenHeight, 0.1f, 100.0f);
+
+		// Get uniform locations
+		unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+		unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+		unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+
+		//Set Matrixes
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);  // Draw 2 triangles from the index buffer
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);	// Draw 2 triangles from the index buffer
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
