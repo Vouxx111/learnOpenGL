@@ -6,15 +6,24 @@
 // ------------------------------------------------------------- //
 
 
+//Screen Data
 int screenWidth = 800;
 int screenHeight = 600;
-
 
 // Global matrix and program handles for access in callbacks
 glm::mat4 projection;
 unsigned int projectionLoc;
 unsigned int shaderProgram; // needed in callback for projection update
 float mixValue;
+
+//Cammera Variables
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+//Frame Data
+float deltaTime = 0.0f;	// Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
 
 
 // ------------------------------------------------------------- //
@@ -23,19 +32,44 @@ float mixValue;
 
 
 void processInput(GLFWwindow* window) {
+	const float cameraSpeed = 7.5f * deltaTime; // adjust accordingly
+
 	// Exit the program if ESC is pressed
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
+	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+
+	//Texture Mixing
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) 
+	{
 		mixValue += 0.005f; // change this value accordingly (might be too slow or too fast based on system hardware)
 		if (mixValue >= 1.0f)
 			mixValue = 1.0f;
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) 
+	{
 		mixValue -= 0.005f; // change this value accordingly (might be too slow or too fast based on system hardware)
 		if (mixValue <= 0.0f)
 			mixValue = 0.0f;
+	}
+
+	//Camera Movement
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		cameraPos += cameraSpeed * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		cameraPos -= cameraSpeed * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 	}
 }
 
@@ -210,7 +244,6 @@ int main() {
 
 	// load and generate the texture
 	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(true);
 
 	unsigned char* data = stbi_load("C:/Users/iflyf/OneDrive/Documents/GitHub/learnOpenGL/container.jpg", &width, &height, &nrChannels, 0);
 	if (data) {
@@ -259,6 +292,12 @@ int main() {
 
 
 	while (!glfwWindowShouldClose(window)) {
+
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+
 		processInput(window);
 
 		// Clear screen
@@ -286,7 +325,7 @@ int main() {
 		glm::mat4 view = glm::mat4(1.0f); // Up direction
 		glm::mat4 projection = glm::mat4(1.0f);
 
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		projection = glm::perspective(glm::radians(90.0f), static_cast<float>(screenWidth) / screenHeight, 0.1f, 100.0f);
 
 		// Get uniform locations
@@ -297,7 +336,6 @@ int main() {
 		//Set Matrixes
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
 
 
 		glBindVertexArray(VAO);

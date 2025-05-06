@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "main.cpp",
               "ToolTip": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAABcBAAAAAAAAAAAuwC8BAAApAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAADUAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-03T18:33:18.259Z",
               "IsPinned": true,
@@ -56,8 +56,7 @@
               "RelativeToolTip": "Config.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-04T21:19:51.988Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-04T21:19:51.988Z"
             },
             {
               "$type": "Document",
@@ -81,8 +80,7 @@
               "RelativeToolTip": "fragmentShader.fs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-05T21:51:07.055Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-05T21:51:07.055Z"
             },
             {
               "$type": "Document",
@@ -94,8 +92,7 @@
               "RelativeToolTip": "vertexShader.vs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-04T21:30:19.025Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-04T21:30:19.025Z"
             }
           ]
         }
