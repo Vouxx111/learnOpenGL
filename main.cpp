@@ -16,10 +16,11 @@ unsigned int projectionLoc;
 unsigned int shaderProgram; // needed in callback for projection update
 float mixValue;
 
-//Cammera Variables
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//Camera Variables
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+bool firstMouse = true;
+float lastX = screenWidth / 2.0;
+float lastY = screenHeight / 2.0;
 
 //Frame Data
 float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -35,42 +36,60 @@ void processInput(GLFWwindow* window) {
 	const float cameraSpeed = 7.5f * deltaTime; // adjust accordingly
 
 	// Exit the program if ESC is pressed
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
-	{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)	{
 		glfwSetWindowShouldClose(window, true);
 	}
 
 	//Texture Mixing
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) 
-	{
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)	{
 		mixValue += 0.005f; // change this value accordingly (might be too slow or too fast based on system hardware)
 		if (mixValue >= 1.0f)
 			mixValue = 1.0f;
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) 
-	{
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)	{
 		mixValue -= 0.005f; // change this value accordingly (might be too slow or too fast based on system hardware)
 		if (mixValue <= 0.0f)
 			mixValue = 0.0f;
 	}
 
 	//Camera Movement
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)	{
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)	{
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)	{
+		camera.ProcessKeyboard(LEFT, deltaTime);
 	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)	{
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
+}
+
+void mouse_callback(GLFWwindow* window, double xPosIn, double yPosIn) {
+	
+	float xpos = static_cast<float>(xPosIn);
+	float ypos = static_cast<float>(yPosIn);
+
+	if (firstMouse)	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xOffset = xpos - lastX;
+	float yOffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xOffset, yOffset);
+
+}
+
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)	{
+	camera.ProcessMouseScroll(static_cast<float>(yOffset));
 }
 
 
@@ -110,8 +129,13 @@ int main() {
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 
-	// Load OpenGL function pointers using GLAD
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);	//Keeps Mouse Focused On Windows
+
+	// Load OpenGL function pointers using GLAD	
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
@@ -222,10 +246,6 @@ int main() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	// Good practice: unbind everything
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
 
 	// ------------------------------------------------------------- //
 	//                          TEXTURING	                         //
@@ -310,6 +330,11 @@ int main() {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		
+
+		// Draw the square
+		ourShader.use();
+
 		glm::mat4 trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
 
@@ -317,16 +342,12 @@ int main() {
 		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
-		// Draw the square
-		ourShader.use();
-
 
 		glm::mat4 model = glm::mat4(1.0f); // No transformations
-		glm::mat4 view = glm::mat4(1.0f); // Up direction
+		glm::mat4 view = camera.GetViewMatrix(); // Up direction
 		glm::mat4 projection = glm::mat4(1.0f);
 
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		projection = glm::perspective(glm::radians(90.0f), static_cast<float>(screenWidth) / screenHeight, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 
 		// Get uniform locations
 		unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
@@ -341,7 +362,7 @@ int main() {
 		glBindVertexArray(VAO);
 		for (unsigned int x = 0; x < 10; x++)	{
 
-			// calculate the model matrix for each object and pass it to shader before drawing
+			// calculate the model matrix for each object and pass it to shader before drawing	
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[x]);
 

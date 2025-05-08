@@ -16,8 +16,7 @@ class Shader {
         unsigned int ID;
 
         // constructor reads and builds the shader
-        Shader(const char* vertexPath, const char* fragmentPath)
-        {
+        Shader(const char* vertexPath, const char* fragmentPath)    {
             // 1. retrieve the vertex/fragment source code from filePath
             std::string vertexCode;
             std::string fragmentCode;
@@ -101,24 +100,19 @@ class Shader {
     private:
 
         //Compilation Error Handling
-        void checkCompileErrors(unsigned int shader, std::string type)
-        {
+        void checkCompileErrors(unsigned int shader, std::string type)  {
             int success;
             char infoLog[1024];
-            if (type != "PROGRAM")
-            {
+            if (type != "PROGRAM")  {
                 glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-                if (!success)
-                {
+                if (!success)   {
                     glGetShaderInfoLog(shader, 1024, NULL, infoLog);
                     std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
                 }
             }
-            else
-            {
+            else  {
                 glGetProgramiv(shader, GL_LINK_STATUS, &success);
-                if (!success)
-                {
+                if (!success)   {
                     glGetProgramInfoLog(shader, 1024, NULL, infoLog);
                     std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
                 }

@@ -7,12 +7,8 @@
       "RelativeMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\fragmentShader.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
-      "RelativeMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|solutionrelative:fragmentShader.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\vertexShader.vs||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|solutionrelative:vertexShader.vs||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|solutionrelative:Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Config.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -21,6 +17,14 @@
     {
       "AbsoluteMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|solutionrelative:Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\fragmentShader.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
+      "RelativeMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|solutionrelative:fragmentShader.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\vertexShader.vs||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{4AEC3308-CD52-4F9D-8472-481C9A8ECF9A}|OpenGL - Glad Template.vcxproj|solutionrelative:vertexShader.vs||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,7 +44,7 @@
               "RelativeDocumentMoniker": "main.cpp",
               "ToolTip": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAADUAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAADYAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-03T18:33:18.259Z",
               "IsPinned": true,
@@ -48,31 +52,44 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "Config.h",
               "DocumentMoniker": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Config.h",
               "RelativeDocumentMoniker": "Config.h",
               "ToolTip": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Config.h",
               "RelativeToolTip": "Config.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-05-04T21:19:51.988Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
+              "Title": "Camera.h",
+              "DocumentMoniker": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Camera.h",
+              "RelativeDocumentMoniker": "Camera.h",
+              "ToolTip": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Camera.h",
+              "RelativeToolTip": "Camera.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-07T21:28:22.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Shader.h",
               "DocumentMoniker": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Shader.h",
               "RelativeDocumentMoniker": "Shader.h",
               "ToolTip": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\Shader.h",
               "RelativeToolTip": "Shader.h",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAAAGYAAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-05-05T21:12:54.071Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "fragmentShader.fs",
               "DocumentMoniker": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\fragmentShader.fs",
               "RelativeDocumentMoniker": "fragmentShader.fs",
@@ -84,7 +101,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "vertexShader.vs",
               "DocumentMoniker": "C:\\Users\\iflyf\\OneDrive\\Documents\\GitHub\\learnOpenGL\\vertexShader.vs",
               "RelativeDocumentMoniker": "vertexShader.vs",
